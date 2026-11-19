@@ -2,6 +2,7 @@
 """Fetch the latest listed paper prices from 100ppi and update data.json."""
 from datetime import datetime, timezone, timedelta
 from html.parser import HTMLParser
+import html as html_lib
 from pathlib import Path
 import json
 import re
@@ -27,19 +28,41 @@ class TableParser(HTMLParser):
 
 def fetch():
     req=urllib.request.Request(URL, headers={"User-Agent":"Mozilla/5.0 (compatible; PaperPriceTracker/1.0)"})
-    with urllib.request.urlopen(req, timeout=30) as response: html=response.read().decode("utf-8", "replace")
+    with urllib.request.urlopen(req, timeout=30) as response:
+        raw=response.read()
+        content_type=response.headers.get("Content-Type", "")
+        encoding=response.headers.get_content_charset()
+        if not encoding:
+            meta=re.search(rb"<meta[^>]+charset\s*=\s*[\"']?([\w-]+)",raw[:8192],re.I)
+            encoding=meta.group(1).decode("ascii","ignore") if meta else "utf-8"
+        html=raw.decode(encoding,"replace")
+
     parser=TableParser(); parser.feed(html)
+    source_rows=parser.rows
+    # Also parse raw table rows in case a minor markup change confuses HTMLParser.
+    for row_html in re.findall(r"<tr\b[^>]*>(.*?)</tr\s*>",html,re.I|re.S):
+        cells=re.findall(r"<t[dh]\b[^>]*>(.*?)</t[dh]\s*>",row_html,re.I|re.S)
+        source_rows.append([
+            " ".join(html_lib.unescape(re.sub(r"<[^>]+>"," ",cell)).split())
+            for cell in cells
+        ])
     records=[]
-    for cells in parser.rows:
+    for cells in source_rows:
         row=" ".join(cells)
         supplier=next((name for name in TARGETS if name in row), None)
         if not supplier: continue
         dates=re.findall(r"20\d{2}-\d{2}-\d{2}", row)
-        prices=re.findall(r"(?<!\d)(\d{3,5})\s*元\s*/\s*吨", row)
-        if not prices: prices=re.findall(r"(?<!\d)(\d{3,5})(?=\s|$)", row)
+        prices=re.findall(r"(?<!\d)([\d,]{3,7})\s*元\s*/\s*吨", row)
         if not dates or not prices: continue
-        records.append({"supplier":supplier,"kind":"黄板纸","grade":"A级","type":"终端价","price":int(prices[0]),"date":dates[-1]})
-    if not records: raise RuntimeError("未能从来源页面解析到目标报价；可能是页面结构变化或访问受限。")
+        records.append({"supplier":supplier,"kind":"黄板纸","grade":"A级","type":"终端价","price":int(prices[0].replace(",","")),"date":dates[-1]})
+    if not records:
+        preview=" ".join(re.sub(r"<[^>]+>"," ",html[:2500]).split())[:700]
+        found={name:(name in html) for name in sorted(TARGETS)}
+        raise RuntimeError(
+            f"未能解析到目标报价。HTTP {response.status}; "
+            f"Content-Type={content_type!r}; encoding={encoding!r}; "
+            f"HTML bytes={len(raw)}; target text found={found}; preview={preview!r}"
+        )
     records=list({(r["supplier"],r["date"]):r for r in records}.values())
     previous={}
     if OUT.exists():
