@@ -20,12 +20,12 @@
   </style>
 </head>
 <body><main>
-  <header class="top"><div><div class="eyebrow">PAPER MARKET · ZHEJIANG</div><h1>浙江废纸价格追踪</h1><p class="sub">华宇、景兴、山鹰 · 黄板纸 A级 · 终端价</p></div><div class="actions"><div id="updated" class="status">正在读取最新数据…</div><button id="refreshData" class="button" type="button">刷新页面数据</button><a class="button primary" href="https://github.com/WOHUIFEIYA/paper-price-tracker/actions/workflows/update-and-publish.yml" target="_blank" rel="noopener" title="打开 GitHub 后点击 Run workflow 触发采集">手动采集</a></div></header>
+  <header class="top"><div><div class="eyebrow">PAPER MARKET · ZHEJIANG</div><h1>浙江废纸价格追踪</h1><p class="sub">华宇、景兴、山鹰 · 黄板纸 A级 · 终端价</p></div><div class="actions"><div id="updated" class="status">正在读取最新数据…</div><button id="refreshData" class="button" type="button">刷新页面数据</button></div></header>
   <section id="cards" class="cards" aria-label="最新报价"></section>
   <section class="panel" aria-labelledby="trendTitle"><div class="toolbar"><h2 id="trendTitle">历史价格趋势</h2><div class="range-buttons" role="group" aria-label="图表时间范围"><button class="range-button" data-range="30" aria-pressed="false">30天</button><button class="range-button" data-range="90" aria-pressed="true">90天</button><button class="range-button" data-range="all" aria-pressed="false">全部</button></div></div><p class="chart-hint">点击折线上的点、日期标签或下方日期，可查看当日各家报价和平均价。平均价按截至该日各家最近一次已发布价格计算。</p><div id="chartLegend" class="legend" aria-label="折线图图例"></div><div class="chart-wrap"><svg id="priceChart" class="chart-svg" viewBox="0 0 1000 360" role="img" aria-label="历史价格折线图"></svg></div><div id="dateStrip" class="date-strip" aria-label="历史日期选择"></div><div class="selected-box" aria-live="polite"><div class="selected-title"><strong id="selectedDate">选择一个日期</strong><span id="selectedAverage">—</span></div><div class="table-wrap"><table class="summary-table"><thead><tr><th>报价方</th><th>价格</th><th>来源报价日期</th></tr></thead><tbody id="selectedPrices"><tr><td colspan="3" class="empty">暂无历史数据</td></tr></tbody></table></div></div></section>
   <section class="panel"><div class="toolbar"><h2>每日统计表</h2><span class="sub">点日期可定位图表并查看明细</span></div><div class="table-wrap"><table><thead><tr><th>统计日期</th><th>绍兴华宇</th><th>嘉兴景兴</th><th>嘉兴山鹰</th><th>三家平均价</th></tr></thead><tbody id="dailyStats"></tbody></table></div></section>
   <section class="panel"><h2>历史明细</h2><div class="table-wrap"><table><thead><tr><th>日期</th><th>报价方</th><th>种类 / 等级</th><th>终端价</th><th>较上次</th></tr></thead><tbody id="history"></tbody></table></div></section>
-  <div class="notice">采集频率：北京时间每天 10:30 与 16:30。“刷新页面数据”只重新读取已发布数据；“手动采集”会打开 GitHub 工作流页面，还需在页面中点击 Run workflow 才会立即采集并发布。自动运行仍按上述时间执行。</div>
+  <div class="notice">采集频率：北京时间每天 10:30 与 16:30。“刷新页面数据”只重新读取已发布的数据；自动运行按上述时间执行。</div>
   <footer class="source">数据来源：<a href="https://fz.100ppi.com/price/" target="_blank" rel="noopener">生意社废纸报价</a> · 自动更新，更新时间以数据记录为准</footer>
 </main>
 <script>
