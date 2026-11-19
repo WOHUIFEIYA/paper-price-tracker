@@ -15,14 +15,17 @@
     .brand{font-weight:700;font-size:18px}.spec{color:var(--muted);font-size:13px;margin-top:3px}.price{font-size:34px;letter-spacing:-.04em;font-weight:760;margin:21px 0 0}.price small{font-size:14px;letter-spacing:0;font-weight:500;color:var(--muted)}
     .date{border-top:1px solid var(--line);margin-top:18px;padding-top:13px;color:var(--muted);font-size:13px;display:flex;justify-content:space-between}.delta{font-weight:700;color:var(--green)}.delta.down{color:#b04c40}.delta.flat{color:var(--muted)}
     .panel{background:var(--paper);border:1px solid var(--line);border-radius:16px;margin-top:20px;padding:20px 22px}.panel h2{font-size:17px;margin:0 0 14px}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;text-align:left;white-space:nowrap}th,td{padding:12px 10px;border-bottom:1px solid var(--line)}th{font-size:12px;color:var(--muted);font-weight:600}td{font-size:14px}tbody tr:last-child td{border-bottom:0}.source{margin-top:20px;color:var(--muted);font-size:12px}.source a{color:var(--green)}.notice{margin-top:14px;padding:11px 13px;border-radius:10px;background:#f4f2e8;color:#75683d;font-size:13px}.empty{color:var(--muted);padding:10px}
-    @media(max-width:850px){.cards{grid-template-columns:repeat(2,1fr)}}@media(max-width:700px){main{padding-top:32px}.top{display:block}.status{display:inline-block;margin-top:14px}.cards{grid-template-columns:1fr}.card{padding:18px}.price{margin-top:13px}}
+    .actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.button{border:1px solid #cddbd1;background:#fff;color:var(--green);border-radius:10px;padding:9px 13px;font:inherit;font-size:13px;font-weight:700;text-decoration:none;cursor:pointer}.button.primary{background:var(--green);color:#fff;border-color:var(--green)}.button:focus-visible,.range-button:focus-visible,.legend-button:focus-visible,.date-chip:focus-visible{outline:3px solid #9fc7ad;outline-offset:2px}.toolbar{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}.range-buttons{display:flex;gap:6px}.range-button,.legend-button,.date-chip{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:999px;padding:6px 10px;font:inherit;font-size:12px;cursor:pointer}.range-button[aria-pressed="true"],.date-chip[aria-pressed="true"]{background:#e8f1eb;border-color:#bdd3c4;color:var(--green);font-weight:700}.chart-hint{margin:0 0 12px;color:var(--muted);font-size:13px}.legend{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 10px}.legend-button{display:inline-flex;align-items:center;gap:7px}.legend-button[aria-pressed="false"]{opacity:.45}.legend-dot{width:9px;height:9px;border-radius:50%;display:inline-block}.chart-wrap{overflow-x:auto}.chart-svg{display:block;width:100%;min-width:640px;height:auto;overflow:visible}.chart-grid{stroke:#e8ede9;stroke-width:1}.chart-axis-label{fill:#718078;font-size:12px}.chart-series{fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}.chart-series.average{stroke-width:4}.chart-point{cursor:pointer;stroke:#fff;stroke-width:2}.chart-point:hover,.chart-point:focus{r:7;outline:none;stroke:#172820;stroke-width:2}.chart-date{fill:#718078;font-size:12px;cursor:pointer}.chart-date:hover,.chart-date.selected{fill:#172820;font-weight:700}.selected-box{margin-top:14px;padding:15px;border-radius:12px;background:#f6f8f6}.selected-title{display:flex;justify-content:space-between;gap:10px;align-items:baseline;margin-bottom:8px}.selected-title strong{font-size:16px}.selected-title span{font-size:12px;color:var(--muted)}.date-strip{display:flex;gap:7px;overflow-x:auto;padding:6px 1px 10px}.date-chip{white-space:nowrap}.summary-table .avg-row td{font-weight:750;background:#edf4ef}.history-date{border:0;background:none;padding:0;color:var(--green);font:inherit;font-size:inherit;font-weight:700;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+    @media(max-width:850px){.cards{grid-template-columns:repeat(2,1fr)}}@media(max-width:700px){main{padding-top:32px}.top{display:block}.status{display:inline-block;margin-top:14px}.cards{grid-template-columns:1fr}.card{padding:18px}.price{margin-top:13px}.panel{padding:16px 14px}.actions{margin-top:16px}.selected-title{display:block}.selected-title span{display:block;margin-top:3px}}
   </style>
 </head>
 <body><main>
-  <header class="top"><div><div class="eyebrow">PAPER MARKET · ZHEJIANG</div><h1>浙江废纸价格追踪</h1><p class="sub">华宇、景兴、山鹰 · 黄板纸 A级 · 终端价</p></div><div id="updated" class="status">正在读取最新数据…</div></header>
+  <header class="top"><div><div class="eyebrow">PAPER MARKET · ZHEJIANG</div><h1>浙江废纸价格追踪</h1><p class="sub">华宇、景兴、山鹰 · 黄板纸 A级 · 终端价</p></div><div class="actions"><div id="updated" class="status">正在读取最新数据…</div><button id="refreshData" class="button" type="button">刷新页面数据</button><a class="button primary" href="https://github.com/WOHUIFEIYA/paper-price-tracker/actions/workflows/update-and-publish.yml" target="_blank" rel="noopener" title="打开 GitHub 后点击 Run workflow 触发采集">手动采集</a></div></header>
   <section id="cards" class="cards" aria-label="最新报价"></section>
-  <section class="panel"><h2>近期报价</h2><div class="table-wrap"><table><thead><tr><th>日期</th><th>报价方</th><th>种类 / 等级</th><th>终端价</th><th>较上次</th></tr></thead><tbody id="history"></tbody></table></div></section>
-  <div class="notice">采集频率：北京时间每天 10:30 与 16:30。平均价按三家各自最新发布的价格计算；页面价格以来源网站实际发布记录为准，若来源未更新，会继续显示其最近发布日期。</div>
+  <section class="panel" aria-labelledby="trendTitle"><div class="toolbar"><h2 id="trendTitle">历史价格趋势</h2><div class="range-buttons" role="group" aria-label="图表时间范围"><button class="range-button" data-range="30" aria-pressed="false">30天</button><button class="range-button" data-range="90" aria-pressed="true">90天</button><button class="range-button" data-range="all" aria-pressed="false">全部</button></div></div><p class="chart-hint">点击折线上的点、日期标签或下方日期，可查看当日各家报价和平均价。平均价按截至该日各家最近一次已发布价格计算。</p><div id="chartLegend" class="legend" aria-label="折线图图例"></div><div class="chart-wrap"><svg id="priceChart" class="chart-svg" viewBox="0 0 1000 360" role="img" aria-label="历史价格折线图"></svg></div><div id="dateStrip" class="date-strip" aria-label="历史日期选择"></div><div class="selected-box" aria-live="polite"><div class="selected-title"><strong id="selectedDate">选择一个日期</strong><span id="selectedAverage">—</span></div><div class="table-wrap"><table class="summary-table"><thead><tr><th>报价方</th><th>价格</th><th>来源报价日期</th></tr></thead><tbody id="selectedPrices"><tr><td colspan="3" class="empty">暂无历史数据</td></tr></tbody></table></div></div></section>
+  <section class="panel"><div class="toolbar"><h2>每日统计表</h2><span class="sub">点日期可定位图表并查看明细</span></div><div class="table-wrap"><table><thead><tr><th>统计日期</th><th>绍兴华宇</th><th>嘉兴景兴</th><th>嘉兴山鹰</th><th>三家平均价</th></tr></thead><tbody id="dailyStats"></tbody></table></div></section>
+  <section class="panel"><h2>历史明细</h2><div class="table-wrap"><table><thead><tr><th>日期</th><th>报价方</th><th>种类 / 等级</th><th>终端价</th><th>较上次</th></tr></thead><tbody id="history"></tbody></table></div></section>
+  <div class="notice">采集频率：北京时间每天 10:30 与 16:30。“刷新页面数据”只重新读取已发布数据；“手动采集”会打开 GitHub 工作流页面，还需在页面中点击 Run workflow 才会立即采集并发布。自动运行仍按上述时间执行。</div>
   <footer class="source">数据来源：<a href="https://fz.100ppi.com/price/" target="_blank" rel="noopener">生意社废纸报价</a> · 自动更新，更新时间以数据记录为准</footer>
 </main>
 <script>
@@ -30,13 +33,74 @@ const names=['浙江绍兴华宇','浙江嘉兴景兴','浙江嘉兴山鹰'];
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt=n=>new Intl.NumberFormat('zh-CN').format(n);
 function render(data){
-  const rows=(data.records||[]).filter(x=>names.includes(x.supplier)).sort((a,b)=>b.date.localeCompare(a.date));
+  const rows=(data.records||[]).filter(x=>names.includes(x.supplier)&&Number.isFinite(Number(x.price))&&/^20\d{2}-\d{2}-\d{2}$/.test(x.date)).sort((a,b)=>b.date.localeCompare(a.date));
   const latest=names.map(n=>rows.find(x=>x.supplier===n)).filter(Boolean);
   document.querySelector('#updated').textContent=`最近采集：${data.fetched_at||'—'}`;
   const cards=names.map(n=>{const x=latest.find(r=>r.supplier===n);if(!x)return `<article class="card"><div class="brand">${esc(n)}</div><p class="empty">暂无报价</p></article>`;return `<article class="card"><div class="brand">${esc(n)}</div><div class="spec">${esc(x.kind||'黄板纸')} · ${esc(x.grade||'A级')} · 终端价</div><div class="price">${fmt(x.price)}<small> 元/吨</small></div><div class="date"><span>报价日期</span><strong>${esc(x.date)}</strong></div></article>`});
-  if(latest.length===names.length){const avg=latest.reduce((sum,x)=>sum+x.price,0)/latest.length;const avgText=Number.isInteger(avg)?fmt(avg):avg.toFixed(2);const dates=[...new Set(latest.map(x=>x.date))];cards.push(`<article class="card average"><div class="brand">三家平均价</div><div class="spec">按各家最新报价计算</div><div class="price">${avgText}<small> 元/吨</small></div><div class="date"><span>报价日期</span><strong>${dates.length===1?esc(dates[0]):'各家日期不同'}</strong></div></article>`)}
+  if(latest.length===names.length){const avg=latest.reduce((sum,x)=>sum+Number(x.price),0)/latest.length;const avgText=Number.isInteger(avg)?fmt(avg):avg.toFixed(2);const dates=[...new Set(latest.map(x=>x.date))];cards.push(`<article class="card average"><div class="brand">三家平均价</div><div class="spec">按各家最新报价计算</div><div class="price">${avgText}<small> 元/吨</small></div><div class="date"><span>报价日期</span><strong>${dates.length===1?esc(dates[0]):'各家日期不同'}</strong></div></article>`)}
   document.querySelector('#cards').innerHTML=cards.join('');
-  const history=rows.slice(0,30); document.querySelector('#history').innerHTML=history.length?history.map(x=>{const prev=rows.find(y=>y.supplier===x.supplier&&y.date<x.date);const d=prev?x.price-prev.price:null;const label=d===null?'—':d>0?`↑ ${fmt(d)}`:d<0?`↓ ${fmt(Math.abs(d))}`:'持平';return `<tr><td>${esc(x.date)}</td><td>${esc(x.supplier)}</td><td>${esc(x.kind||'黄板纸')} / ${esc(x.grade||'A级')}</td><td>${fmt(x.price)} 元/吨</td><td class="delta ${d===null||d===0?'flat':d<0?'down':''}">${label}</td></tr>`}).join(''):'<tr><td colspan="5" class="empty">暂无历史数据</td></tr>';
+
+  const quotes=Object.fromEntries(names.map(n=>[n,[...new Map(rows.filter(x=>x.supplier===n).map(x=>[x.date,x])).values()].sort((a,b)=>a.date.localeCompare(b.date))]));
+  const dates=[...new Set(rows.map(x=>x.date))].sort();
+  const timeline=dates.map(date=>{const asOf=Object.fromEntries(names.map(n=>[n,quotes[n].filter(x=>x.date<=date).at(-1)||null]));const values=names.map(n=>asOf[n]?Number(asOf[n].price):NaN);const average=values.every(Number.isFinite)?values.reduce((a,b)=>a+b,0)/names.length:null;return {date,asOf,average}});
+  const colorMap={'浙江绍兴华宇':'#3d6ec8','浙江嘉兴景兴':'#d38b2c','浙江嘉兴山鹰':'#b35348','三家平均价':'#286248'};
+  const seriesVisible=new Map([...names,'三家平均价'].map(n=>[n,true]));
+  let range='90';let selectedDate=dates.at(-1)||'';
+  const timelineByDate=new Map(timeline.map(x=>[x.date,x]));
+  const fmtAverage=n=>Number.isInteger(n)?fmt(n):fmt(n.toFixed(2));
+  const visibleTimeline=()=>{if(range==='all'||!timeline.length)return timeline;const latestDate=new Date(`${dates.at(-1)}T00:00:00Z`);latestDate.setUTCDate(latestDate.getUTCDate()-(Number(range)-1));const cutoff=latestDate.toISOString().slice(0,10);return timeline.filter(x=>x.date>=cutoff)};
+
+  const legend=document.querySelector('#chartLegend');
+  legend.innerHTML=[...names,'三家平均价'].map(n=>`<button class="legend-button" type="button" data-series="${esc(n)}" aria-pressed="true"><span class="legend-dot" style="background:${colorMap[n]}"></span>${esc(n)}</button>`).join('');
+  legend.addEventListener('click',event=>{const button=event.target.closest('[data-series]');if(!button)return;const name=button.dataset.series;seriesVisible.set(name,!seriesVisible.get(name));button.setAttribute('aria-pressed',String(seriesVisible.get(name)));drawChart()});
+
+  function selectDate(date){if(!timelineByDate.has(date))return;selectedDate=date;renderSelected();drawChart();}
+  function renderSelected(){
+    const item=timelineByDate.get(selectedDate);if(!item)return;
+    document.querySelector('#selectedDate').textContent=`${item.date} 报价情况`;
+    document.querySelector('#selectedAverage').textContent=item.average===null?'平均价：数据不足':`三家平均价：${fmtAverage(item.average)} 元/吨`;
+    const supplierRows=names.map(n=>{const q=item.asOf[n];const price=q?`${fmt(q.price)} 元/吨`:'—';const quoteDate=q?`${q.date===item.date?'当日报价':'最近报价 '+q.date}`:'暂无';return `<tr><td>${esc(n)}</td><td>${price}</td><td>${esc(quoteDate)}</td></tr>`}).join('');
+    const averageRow=item.average===null?'':`<tr class="avg-row"><td>三家平均价</td><td>${fmtAverage(item.average)} 元/吨</td><td>按截至该日各家最近报价计算</td></tr>`;
+    document.querySelector('#selectedPrices').innerHTML=supplierRows+averageRow;
+    document.querySelectorAll('.date-chip').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.date===selectedDate)));
+    document.querySelectorAll('#dailyStats .history-date').forEach(b=>b.setAttribute('aria-current',String(b.dataset.date===selectedDate)));
+  }
+
+  function drawChart(){
+    const svg=document.querySelector('#priceChart');const visible=visibleTimeline();
+    if(!visible.length){svg.innerHTML='<text x="500" y="180" text-anchor="middle" class="chart-axis-label">暂无历史报价数据</text>';return}
+    const W=1000,H=360,L=76,R=980,T=22,B=286;const xAt=i=>visible.length===1?(L+R)/2:L+(R-L)*i/(visible.length-1);
+    const exact=Object.fromEntries(names.map(n=>[n,new Map(quotes[n].map(q=>[q.date,Number(q.price)]))]));
+    const values=[];for(const item of visible){for(const n of names){const value=exact[n].get(item.date);if(Number.isFinite(value))values.push(value)}if(item.average!==null)values.push(item.average)}
+    if(!values.length){svg.innerHTML='<text x="500" y="180" text-anchor="middle" class="chart-axis-label">暂无可绘制的报价</text>';return}
+    let low=Math.floor(Math.min(...values)/100)*100,high=Math.ceil(Math.max(...values)/100)*100;if(low===high){low-=100;high+=100}const pad=Math.max((high-low)*.12,30);low=Math.floor((low-pad)/50)*50;high=Math.ceil((high+pad)/50)*50;const yAt=v=>B-(Number(v)-low)/(high-low)*(B-T);
+    const parts=[];for(let i=0;i<=4;i++){const y=T+(B-T)*i/4;const val=high-(high-low)*i/4;parts.push(`<line class="chart-grid" x1="${L}" y1="${y}" x2="${R}" y2="${y}"/><text class="chart-axis-label" x="${L-12}" y="${y+4}" text-anchor="end">${fmt(Math.round(val))}</text>`)}
+    const selectedIndex=visible.findIndex(x=>x.date===selectedDate);if(selectedIndex>=0)parts.push(`<line x1="${xAt(selectedIndex)}" y1="${T}" x2="${xAt(selectedIndex)}" y2="${B}" stroke="#9eb3a4" stroke-dasharray="4 5"/>`);
+    for(const name of [...names,'三家平均价']){
+      if(!seriesVisible.get(name))continue;
+      const points=visible.map((item,i)=>({date:item.date,x:xAt(i),value:name==='三家平均价'?item.average:exact[name].get(item.date)})).filter(p=>Number.isFinite(p.value));
+      if(!points.length)continue;
+      if(points.length>1)parts.push(`<path class="chart-series ${name==='三家平均价'?'average':''}" stroke="${colorMap[name]}" d="${points.map((p,i)=>`${i?'L':'M'} ${p.x.toFixed(1)} ${yAt(p.value).toFixed(1)}`).join(' ')}"/>`);
+      for(const p of points){const label=`${name}，${p.date}，${fmtAverage(p.value)} 元/吨`;parts.push(`<circle class="chart-point" cx="${p.x}" cy="${yAt(p.value)}" r="5" fill="${colorMap[name]}" tabindex="0" role="button" data-date="${p.date}" aria-label="${esc(label)}"><title>${esc(label)}</title></circle>`)}
+    }
+    const step=Math.max(1,Math.ceil(visible.length/7));for(let i=0;i<visible.length;i+=step){const date=visible[i].date;parts.push(`<text class="chart-date ${date===selectedDate?'selected':''}" x="${xAt(i)}" y="${B+26}" text-anchor="middle" tabindex="0" role="button" data-date="${date}" aria-label="查看 ${date}">${date.slice(5)}</text>`)}
+    if((visible.length-1)%step!==0&&visible.length>1){const i=visible.length-1,date=visible[i].date;parts.push(`<text class="chart-date ${date===selectedDate?'selected':''}" x="${xAt(i)}" y="${B+26}" text-anchor="middle" tabindex="0" role="button" data-date="${date}" aria-label="查看 ${date}">${date.slice(5)}</text>`)}
+    svg.innerHTML=parts.join('');
+    const dateButtons=visible.slice(-14);document.querySelector('#dateStrip').innerHTML=dateButtons.map(x=>`<button class="date-chip" type="button" data-date="${x.date}" aria-pressed="${x.date===selectedDate}">${x.date}</button>`).join('');
+  }
+
+  function syncRange(button){range=button.dataset.range;document.querySelectorAll('.range-button').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));const visible=visibleTimeline();if(visible.length&&!visible.some(x=>x.date===selectedDate))selectedDate=visible.at(-1).date;renderSelected();drawChart()}
+  document.querySelectorAll('.range-button').forEach(button=>button.addEventListener('click',()=>syncRange(button)));
+  document.querySelector('#priceChart').addEventListener('click',event=>{const point=event.target.closest('[data-date]');if(point)selectDate(point.dataset.date)});
+  document.querySelector('#priceChart').addEventListener('keydown',event=>{if((event.key==='Enter'||event.key===' ')&&event.target.matches('[data-date]')){event.preventDefault();selectDate(event.target.dataset.date)}});
+  document.querySelector('#dateStrip').addEventListener('click',event=>{const button=event.target.closest('[data-date]');if(button)selectDate(button.dataset.date)});
+
+  const dailyRows=[...timeline].reverse();document.querySelector('#dailyStats').innerHTML=dailyRows.length?dailyRows.map(item=>`<tr><td><button class="history-date" type="button" data-date="${item.date}" aria-current="${item.date===selectedDate}">${item.date}</button></td>${names.map(n=>{const q=item.asOf[n];return `<td>${q?`${fmt(q.price)}<small> · ${esc(q.date.slice(5))}</small>`:'—'}</td>`}).join('')}<td><strong>${item.average===null?'—':`${fmtAverage(item.average)} 元/吨`}</strong></td></tr>`).join(''):'<tr><td colspan="5" class="empty">暂无历史数据</td></tr>';
+  document.querySelector('#dailyStats').addEventListener('click',event=>{const button=event.target.closest('[data-date]');if(button)selectDate(button.dataset.date)});
+  const history=rows.slice(0,60);document.querySelector('#history').innerHTML=history.length?history.map(x=>{const prev=rows.find(y=>y.supplier===x.supplier&&y.date<x.date);const d=prev?Number(x.price)-Number(prev.price):null;const label=d===null?'—':d>0?`↑ ${fmt(d)}`:d<0?`↓ ${fmt(Math.abs(d))}`:'持平';return `<tr><td><button class="history-date" type="button" data-date="${x.date}">${esc(x.date)}</button></td><td>${esc(x.supplier)}</td><td>${esc(x.kind||'黄板纸')} / ${esc(x.grade||'A级')}</td><td>${fmt(x.price)} 元/吨</td><td class="delta ${d===null||d===0?'flat':d<0?'down':''}">${label}</td></tr>`}).join(''):'<tr><td colspan="5" class="empty">暂无历史数据</td></tr>';
+  document.querySelector('#history').addEventListener('click',event=>{const button=event.target.closest('[data-date]');if(button)selectDate(button.dataset.date)});
+  renderSelected();drawChart();
 }
-fetch('./data.json?'+Date.now(),{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('data unavailable');return r.json()}).then(render).catch(()=>{document.querySelector('#updated').textContent='数据暂不可用';document.querySelector('#cards').innerHTML='<div class="card">尚未获取到报价，请稍后刷新。</div>'});
+async function loadData(){const button=document.querySelector('#refreshData');button.disabled=true;button.textContent='正在读取…';try{const response=await fetch('./data.json?'+Date.now(),{cache:'no-store'});if(!response.ok)throw Error('data unavailable');render(await response.json())}catch{document.querySelector('#updated').textContent='数据暂不可用';document.querySelector('#cards').innerHTML='<div class="card">尚未获取到报价，请稍后刷新。</div>'}finally{button.disabled=false;button.textContent='刷新页面数据'}}
+document.querySelector('#refreshData').addEventListener('click',loadData);loadData();
 </script></body></html>
