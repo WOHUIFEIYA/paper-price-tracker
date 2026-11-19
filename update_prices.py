@@ -27,15 +27,50 @@ class TableParser(HTMLParser):
             self.rows.append(self.row); self.row=None
 
 def fetch():
-    req=urllib.request.Request(URL, headers={"User-Agent":"Mozilla/5.0 (compatible; PaperPriceTracker/1.0)"})
-    with urllib.request.urlopen(req, timeout=30) as response:
-        raw=response.read()
-        content_type=response.headers.get("Content-Type", "")
-        encoding=response.headers.get_content_charset()
+    def get_page(cookie=None):
+        headers={
+            "User-Agent": (
+                "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+                "(KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+            ),
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
+            "Cache-Control": "no-cache",
+            "Referer": "https://fz.100ppi.com/",
+        }
+        if cookie:
+            headers["Cookie"] = cookie
+        req=urllib.request.Request(URL, headers=headers)
+        with urllib.request.urlopen(req, timeout=30) as response:
+            raw=response.read()
+            content_type=response.headers.get("Content-Type", "")
+            status=response.status
+            encoding=response.headers.get_content_charset()
         if not encoding:
             meta=re.search(rb"<meta[^>]+charset\s*=\s*[\"']?([\w-]+)",raw[:8192],re.I)
             encoding=meta.group(1).decode("ascii","ignore") if meta else "utf-8"
-        html=raw.decode(encoding,"replace")
+        return raw, content_type, status, encoding, raw.decode(encoding,"replace")
+
+    raw, content_type, status, encoding, html = get_page()
+
+    # 100ppi may return a short JavaScript interstitial instead of its table.
+    # Its script sets a temporary cookie and reloads the page; mirror that
+    # cookie once so the scheduled, non-browser request can continue.
+    if "正在进行安全检查" in html or "HW_CHECK" in html:
+        cookie_match=re.search(
+            r'document\.cookie\s*=\s*["\']([^"\']+)["\']\s*\+\s*["\']\s*=\s*["\']\s*\+\s*([\w$]+)',
+            html,
+        )
+        if cookie_match:
+            cookie_name, value_variable = cookie_match.groups()
+            value_match=re.search(
+                r'\b(?:var\s+)?' + re.escape(value_variable) + r'\s*=\s*["\']([^"\']+)["\']',
+                html,
+            )
+            if value_match:
+                raw, content_type, status, encoding, html = get_page(
+                    f"{cookie_name}={value_match.group(1)}"
+                )
 
     parser=TableParser(); parser.feed(html)
     source_rows=parser.rows
@@ -59,7 +94,7 @@ def fetch():
         preview=" ".join(re.sub(r"<[^>]+>"," ",html[:2500]).split())[:700]
         found={name:(name in html) for name in sorted(TARGETS)}
         raise RuntimeError(
-            f"未能解析到目标报价。HTTP {response.status}; "
+            f"未能解析到目标报价。HTTP {status}; "
             f"Content-Type={content_type!r}; encoding={encoding!r}; "
             f"HTML bytes={len(raw)}; target text found={found}; preview={preview!r}"
         )
