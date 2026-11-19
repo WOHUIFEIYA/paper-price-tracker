@@ -1,0 +1,9 @@
+{
+  "source": "https://fz.100ppi.com/price/",
+  "fetched_at": "页面样例记录，初次部署后由定时任务刷新",
+  "records": [
+    {"supplier":"浙江绍兴华宇","kind":"黄板纸","grade":"A级","type":"终端价","price":1880,"date":"2026-10-12"},
+    {"supplier":"浙江嘉兴景兴","kind":"黄板纸","grade":"A级","type":"终端价","price":1890,"date":"2026-10-12"},
+    {"supplier":"浙江嘉兴山鹰","kind":"黄板纸","grade":"A级","type":"终端价","price":2050,"date":"2026-10-12"}
+  ]
+}

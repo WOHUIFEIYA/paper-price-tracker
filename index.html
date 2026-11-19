@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f7f4">
+  <title>浙江废纸价格追踪</title>
+  <style>
+    :root{color-scheme:light;--ink:#172820;--muted:#718078;--line:#e4eae5;--green:#286248;--paper:#fff;--bg:#f5f7f4}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif}
+    main{max-width:980px;margin:0 auto;padding:48px 22px 64px}.top{display:flex;justify-content:space-between;gap:18px;align-items:flex-end;margin-bottom:28px}
+    .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--green);font-weight:750}h1{font-size:clamp(28px,5vw,42px);line-height:1.15;margin:8px 0}.sub{color:var(--muted);margin:0}
+    .status{background:#e8f1eb;color:var(--green);border-radius:999px;padding:8px 13px;font-size:13px;white-space:nowrap}
+    .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}.card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:21px;box-shadow:0 5px 18px #1c33200a}.card.average{background:#edf4ef;border-color:#d6e5db}
+    .brand{font-weight:700;font-size:18px}.spec{color:var(--muted);font-size:13px;margin-top:3px}.price{font-size:34px;letter-spacing:-.04em;font-weight:760;margin:21px 0 0}.price small{font-size:14px;letter-spacing:0;font-weight:500;color:var(--muted)}
+    .date{border-top:1px solid var(--line);margin-top:18px;padding-top:13px;color:var(--muted);font-size:13px;display:flex;justify-content:space-between}.delta{font-weight:700;color:var(--green)}.delta.down{color:#b04c40}.delta.flat{color:var(--muted)}
+    .panel{background:var(--paper);border:1px solid var(--line);border-radius:16px;margin-top:20px;padding:20px 22px}.panel h2{font-size:17px;margin:0 0 14px}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;text-align:left;white-space:nowrap}th,td{padding:12px 10px;border-bottom:1px solid var(--line)}th{font-size:12px;color:var(--muted);font-weight:600}td{font-size:14px}tbody tr:last-child td{border-bottom:0}.source{margin-top:20px;color:var(--muted);font-size:12px}.source a{color:var(--green)}.notice{margin-top:14px;padding:11px 13px;border-radius:10px;background:#f4f2e8;color:#75683d;font-size:13px}.empty{color:var(--muted);padding:10px}
+    @media(max-width:850px){.cards{grid-template-columns:repeat(2,1fr)}}@media(max-width:700px){main{padding-top:32px}.top{display:block}.status{display:inline-block;margin-top:14px}.cards{grid-template-columns:1fr}.card{padding:18px}.price{margin-top:13px}}
+  </style>
+</head>
+<body><main>
+  <header class="top"><div><div class="eyebrow">PAPER MARKET · ZHEJIANG</div><h1>浙江废纸价格追踪</h1><p class="sub">华宇、景兴、山鹰 · 黄板纸 A级 · 终端价</p></div><div id="updated" class="status">正在读取最新数据…</div></header>
+  <section id="cards" class="cards" aria-label="最新报价"></section>
+  <section class="panel"><h2>近期报价</h2><div class="table-wrap"><table><thead><tr><th>日期</th><th>报价方</th><th>种类 / 等级</th><th>终端价</th><th>较上次</th></tr></thead><tbody id="history"></tbody></table></div></section>
+  <div class="notice">采集频率：北京时间每天 10:30 与 16:30。平均价按三家各自最新发布的价格计算；页面价格以来源网站实际发布记录为准，若来源未更新，会继续显示其最近发布日期。</div>
+  <footer class="source">数据来源：<a href="https://fz.100ppi.com/price/" target="_blank" rel="noopener">生意社废纸报价</a> · 自动更新，更新时间以数据记录为准</footer>
+</main>
+<script>
+const names=['浙江绍兴华宇','浙江嘉兴景兴','浙江嘉兴山鹰'];
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=n=>new Intl.NumberFormat('zh-CN').format(n);
+function render(data){
+  const rows=(data.records||[]).filter(x=>names.includes(x.supplier)).sort((a,b)=>b.date.localeCompare(a.date));
+  const latest=names.map(n=>rows.find(x=>x.supplier===n)).filter(Boolean);
+  document.querySelector('#updated').textContent=`最近采集：${data.fetched_at||'—'}`;
+  const cards=names.map(n=>{const x=latest.find(r=>r.supplier===n);if(!x)return `<article class="card"><div class="brand">${esc(n)}</div><p class="empty">暂无报价</p></article>`;return `<article class="card"><div class="brand">${esc(n)}</div><div class="spec">${esc(x.kind||'黄板纸')} · ${esc(x.grade||'A级')} · 终端价</div><div class="price">${fmt(x.price)}<small> 元/吨</small></div><div class="date"><span>报价日期</span><strong>${esc(x.date)}</strong></div></article>`});
+  if(latest.length===names.length){const avg=latest.reduce((sum,x)=>sum+x.price,0)/latest.length;const avgText=Number.isInteger(avg)?fmt(avg):avg.toFixed(2);const dates=[...new Set(latest.map(x=>x.date))];cards.push(`<article class="card average"><div class="brand">三家平均价</div><div class="spec">按各家最新报价计算</div><div class="price">${avgText}<small> 元/吨</small></div><div class="date"><span>报价日期</span><strong>${dates.length===1?esc(dates[0]):'各家日期不同'}</strong></div></article>`)}
+  document.querySelector('#cards').innerHTML=cards.join('');
+  const history=rows.slice(0,30); document.querySelector('#history').innerHTML=history.length?history.map(x=>{const prev=rows.find(y=>y.supplier===x.supplier&&y.date<x.date);const d=prev?x.price-prev.price:null;const label=d===null?'—':d>0?`↑ ${fmt(d)}`:d<0?`↓ ${fmt(Math.abs(d))}`:'持平';return `<tr><td>${esc(x.date)}</td><td>${esc(x.supplier)}</td><td>${esc(x.kind||'黄板纸')} / ${esc(x.grade||'A级')}</td><td>${fmt(x.price)} 元/吨</td><td class="delta ${d===null||d===0?'flat':d<0?'down':''}">${label}</td></tr>`}).join(''):'<tr><td colspan="5" class="empty">暂无历史数据</td></tr>';
+}
+fetch('./data.json?'+Date.now(),{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('data unavailable');return r.json()}).then(render).catch(()=>{document.querySelector('#updated').textContent='数据暂不可用';document.querySelector('#cards').innerHTML='<div class="card">尚未获取到报价，请稍后刷新。</div>'});
+</script></body></html>
