@@ -1,38 +1,49 @@
-  name: Update prices and publish
+name: Update prices and publish
+
 on:
   schedule:
     - cron: '30 2 * * *'
     - cron: '30 8 * * *'
   workflow_dispatch:
   push:
-    branches: [main]
+    branches:
+      - main
     paths:
-      - 'index.html'
-      - 'data.json'
-      - 'update_prices.py'
-      - '.github/workflows/update-and-publish.yml'
+      - index.html
+      - data.json
+      - update_prices.py
+      - .github/workflows/update-and-publish.yml
+
 permissions:
   contents: read
   pages: write
   id-token: write
+
 concurrency:
   group: pages
   cancel-in-progress: true
+
 jobs:
   publish:
+    runs-on: ubuntu-latest
     environment:
       name: github-pages
-    runs-on: ubuntu-latest
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: '3.x'
       - name: Update source prices
         run: python update_prices.py
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
           path: '.'
-      - id: deployment
+      - name: Deploy to GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v4
