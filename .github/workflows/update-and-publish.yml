@@ -10,11 +10,13 @@ on:
       - main
     paths:
       - index.html
+      - cloudflare-config.js
       - data.json
       - update_prices.py
       - .github/workflows/update-and-publish.yml
 
 permissions:
+  actions: read
   contents: read
   pages: write
   id-token: write
@@ -31,19 +33,22 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: '3.x'
       - name: Update source prices
         run: python update_prices.py
       - name: Configure Pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
+          name: github-pages
           path: '.'
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5.0.1
+        with:
+          artifact_name: github-pages
