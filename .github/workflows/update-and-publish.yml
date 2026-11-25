@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deployment1.outputs.page_url || steps.deployment2.outputs.page_url || steps.deployment3.outputs.page_url || steps.deployment4.outputs.page_url || steps.deployment5.outputs.page_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -43,12 +43,61 @@ jobs:
       - name: Configure Pages
         uses: actions/configure-pages@v6
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v5
         with:
           name: github-pages
           path: '.'
-      - name: Deploy to GitHub Pages
-        id: deployment
+
+      # GitHub 的 artifact 可见性存在短暂延迟（actions/deploy-pages#451），
+      # 上传后立刻部署可能短暂找不到 github-pages artifact，因此做有限次重试。
+      - name: Deploy to GitHub Pages (attempt 1)
+        id: deployment1
+        continue-on-error: true
         uses: actions/deploy-pages@v5.0.1
         with:
           artifact_name: github-pages
+      - name: Wait before retry 1
+        if: steps.deployment1.outcome != 'success'
+        run: sleep 10
+      - name: Deploy to GitHub Pages (attempt 2)
+        id: deployment2
+        if: steps.deployment1.outcome != 'success'
+        continue-on-error: true
+        uses: actions/deploy-pages@v5.0.1
+        with:
+          artifact_name: github-pages
+      - name: Wait before retry 2
+        if: steps.deployment1.outcome != 'success' && steps.deployment2.outcome != 'success'
+        run: sleep 20
+      - name: Deploy to GitHub Pages (attempt 3)
+        id: deployment3
+        if: steps.deployment1.outcome != 'success' && steps.deployment2.outcome != 'success'
+        continue-on-error: true
+        uses: actions/deploy-pages@v5.0.1
+        with:
+          artifact_name: github-pages
+      - name: Wait before retry 3
+        if: steps.deployment1.outcome != 'success' && steps.deployment2.outcome != 'success' && steps.deployment3.outcome != 'success'
+        run: sleep 30
+      - name: Deploy to GitHub Pages (attempt 4)
+        id: deployment4
+        if: steps.deployment1.outcome != 'success' && steps.deployment2.outcome != 'success' && steps.deployment3.outcome != 'success'
+        continue-on-error: true
+        uses: actions/deploy-pages@v5.0.1
+        with:
+          artifact_name: github-pages
+      - name: Wait before retry 4
+        if: steps.deployment1.outcome != 'success' && steps.deployment2.outcome != 'success' && steps.deployment3.outcome != 'success' && steps.deployment4.outcome != 'success'
+        run: sleep 60
+      - name: Deploy to GitHub Pages (attempt 5)
+        id: deployment5
+        if: steps.deployment1.outcome != 'success' && steps.deployment2.outcome != 'success' && steps.deployment3.outcome != 'success' && steps.deployment4.outcome != 'success'
+        continue-on-error: true
+        uses: actions/deploy-pages@v5.0.1
+        with:
+          artifact_name: github-pages
+      - name: Fail if all deployment attempts failed
+        if: steps.deployment1.outcome != 'success' && steps.deployment2.outcome != 'success' && steps.deployment3.outcome != 'success' && steps.deployment4.outcome != 'success' && steps.deployment5.outcome != 'success'
+        run: |
+          echo "All GitHub Pages deployment attempts failed."
+          exit 1
